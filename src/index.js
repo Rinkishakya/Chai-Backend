@@ -1,26 +1,40 @@
+import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db/dbIndex.js";
+import userRouter from "./routes/user.routes.js";
 
+
+
+// env config
 dotenv.config({
-    path: "./env"
+    path: "./.env"
 });
 
+const app = express(); // importing app from app.js
+
+//middlewares
+app.use(express.json());
+
+// test route
+app.get("/", (req, res) => {
+  res.send("Server chal raha hai");
+});
+
+
+// ✅ ROUTES MOUNT (MOST IMPORTANT LINE)
+app.use("/api/v1/users", userRouter);
+
+
+// DB connect + server start
 connectDB()
-.then(() => {
-   app.listen(process.env.PORT || 8000, () => {
-        console.log(`Server is running on port ${process.env.PORT || 8000}`);
+  .then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is running on port ${process.env.PORT || 8000}`);
     });
-})
-.catch(err => {
-    console.log("Failed to connect to the database");
-    
-})
-
-
-
-
-
-
+  })
+  .catch((err) => {
+    console.log("Failed to connect to the database", err);
+  });
 
 
 /*

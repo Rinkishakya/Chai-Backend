@@ -1,10 +1,22 @@
-import {asyncHandler} from "../utils/asyncHandler.js";
+import asynHandler from "../utils/asynHandler.js";
 
 
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asynHandler(async (req, res) => {
     res.status(200).json({
         message: "ok"
-    })
-})
+    });
+});
 
-export {registerUser}
+const login = asynHandler(async (req, res) => {
+  res.status(200).json({
+    message: "Login successfully"
+  });
+});
+
+
+export default { 
+    registerUser, 
+    login 
+};
+
+// export default registerUser;
