@@ -45,8 +45,9 @@ if(
 }
 
 // check if user already exists: username or email
-const existingUser = User.findOne({
+const existingUser = await  User.findOne({
     $or: [{ email }, { username }]
+    
 
 })
 
@@ -90,10 +91,11 @@ if (!createdUser) {
     throw new apiError(500, "User creation failed, try again later");
 }
 
+// api return response to frontend
+  return res.status(201).json(
+    new ApiResponse(200,  createdUser, "User registered successfully")
+    )
 });
-
-
-
 
 
 

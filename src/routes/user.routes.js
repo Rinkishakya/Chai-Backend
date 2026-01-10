@@ -1,10 +1,9 @@
-import Router from "express"
+import {Router} from "express"
 import userController from "../controllers/user.controller.js"
+import upload from "../middlewears/multer.middleware.js";
+
 const { registerUser, login } = userController;
-import upload from "../middlewares/multer.middleware.js";
-
-
-const router = Router()
+const router = Router();
 
 router.route("/register").post(
     upload.fields([
