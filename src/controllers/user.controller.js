@@ -3,18 +3,17 @@ import apiError from "../utils/apiError.js";
 import {User} from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/fileUpload.js";
 import ApiResponse from "../utils/apiResponse.js";
+import bcrypt from "bcrypt";
+
 
 
 const registerUser = asynHandler(async (req, res) => {
-    res.status(200).json({
-        message: "ok"
-    });
-});
+//     res.status(200).json({
+//         message: "ok api successfully"
+//     });
+// });
 
-const login = asynHandler(async (req, res) => {
-//   res.status(200).json({
-//     message: "Login successfully"
-//   });
+
 
 
 // get user deatails from frontend
@@ -37,9 +36,7 @@ console.log("fullname:", fullname);
 // } // sbko alag alag check krna pdega
 
 // validation - not empty
-if(
-    [fullname, username, email, password].some((field) => field?.trim() === "")
-)
+if( [fullname, username, email, password].some((field) => field?.trim() === ""))
 {
     throw new apiError(400, "All fields are required");
 }
@@ -48,61 +45,69 @@ if(
 const existingUser = await  User.findOne({
     $or: [{ email }, { username }]
     
-
-})
+});
 
 if (existingUser) {
     throw new apiError(409, "User already exists with this email or username");
 }
 
 // check the image,
-const avtarLocalPath = req.files?.avtar[0]?.path;
-const coverImageLocalPath = req.files?.coverImage[0]?.path;
+const avatarLocalPath = req.files?.avatar?.[0]?.path;
+const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
+ //console.log("FILES:", req.files);
+
 
 //  check for avtar
-if (!avtarLocalPath) {
+if (!avatarLocalPath) {
     throw new apiError(400, "Avtar is required");
 }
 
 //upload avtar to cloudinary
- const avtar = await uploadOnCloudinary(avtarLocalPath)
- const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+ const avatar = await uploadOnCloudinary(avatarLocalPath);
+ const coverImage = coverImageLocalPath
+    ? await uploadOnCloudinary(coverImageLocalPath)
+    : null;
 
-if(!avtar) {
+// console.log("AVATAR URL:", avatar.secure_url);
+
+
+if(!avatar) {
     throw new apiError(400, "Avtar upload failed, try again later");  
 }
+
+ const hashedPassword = await bcrypt.hash(password, 10);
 
 // create the object - create entery in db
  const user = await User.create({
     username: username.toLowerCase(),
-    password,   
+    password: hashedPassword,
     fullname,
     email,
-    avtar: avtar.url,
-    coverImage: coverImage?.url || "",
-})
+    avatar: avatar.secure_url,
+    coverImage: coverImage?.secure_url || "",
+});
 
 
 const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
-)
+);
 
-if (!createdUser) {
-    throw new apiError(500, "User creation failed, try again later");
-}
+// console.log("CREATED USER:", createdUser.avatar);
+
+// if (!createdUser) {
+//     throw new apiError(500, "User creation failed, try again later");
+// }
 
 // api return response to frontend
   return res.status(201).json(
-    new ApiResponse(200,  createdUser, "User registered successfully")
-    )
+    new ApiResponse(201,  createdUser, "User registered successfully")
+    );
 });
 
 
 
 
-export default { 
-    registerUser, 
-    login 
-};
+// export  {registerUser};
 
-// export default registerUser;
+ export default registerUser;
