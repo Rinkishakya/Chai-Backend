@@ -55,7 +55,7 @@ if (existingUser) {
 const avatarLocalPath = req.files?.avatar?.[0]?.path;
 const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
- //console.log("FILES:", req.files);
+ console.log("FILES:", req.files);
 
 
 //  check for avtar

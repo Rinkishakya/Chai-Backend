@@ -1,14 +1,16 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import connectDB from "./db/dbIndex.js";
 import userRouter from "./routes/user.routes.js";
 
 
 
 // env config
-dotenv.config({
-    path: "./.env"
-});
+// dotenv.config({
+//     path: "./.env"
+// });
 
 const app = express(); // importing app from app.js
 

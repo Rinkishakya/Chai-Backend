@@ -19,19 +19,19 @@ username: {
         trim: true,
         lowercase: true, 
     },
-    fullName: {
+    fullname: {
         type: String,
         required: true,
         trim: true,
         index: true
     },
 
-    avtarUrl: {
+    avatar: {
         type: String, //cloudinary url
         required: true
     },
 
-    coverImageUrl: {
+    coverImage: {
         type: String, //cloudinary url
         
     },
@@ -61,7 +61,7 @@ userSchema.pre("save", async function (next) {
         return next();
 
         this.password = await  bcrypt.hash(this.password, 10);
-        next()
+        // next()
     
 })
 
