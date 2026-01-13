@@ -50,12 +50,12 @@ const existingUser = await  User.findOne({
 if (existingUser) {
     throw new apiError(409, "User already exists with this email or username");
 }
-
+ console.log(req.files);
 // check the image,
 const avatarLocalPath = req.files?.avatar?.[0]?.path;
 const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
-
  console.log("FILES:", req.files);
+
 
 
 //  check for avtar
@@ -73,7 +73,7 @@ if (!avatarLocalPath) {
 
 
 if(!avatar) {
-    throw new apiError(400, "Avtar upload failed, try again later");  
+    throw new apiError(400, "Avatar upload failed, try again later");  
 }
 
  const hashedPassword = await bcrypt.hash(password, 10);
